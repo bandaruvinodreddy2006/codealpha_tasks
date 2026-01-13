@@ -1,0 +1,49 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+df = pd.read_csv("Unemployment_Rate_upto_11_2020.csv")
+
+print("First 5 rows of dataset:")
+print(df.head())
+
+df.columns = df.columns.str.strip()
+
+df['Date'] = pd.to_datetime(df['Date'])
+
+print("\nMissing values:")
+print(df.isnull().sum())
+
+df.dropna(inplace=True)
+
+print("\nStatistical Summary:")
+print(df.describe())
+
+plt.figure()
+sns.lineplot(x='Date', y='Estimated Unemployment Rate (%)', data=df)
+plt.title("Unemployment Rate Over Time")
+plt.xticks(rotation=45)
+plt.show()
+
+covid_data = df[df['Date'].dt.year == 2020]
+
+plt.figure()
+sns.lineplot(x='Date', y='Estimated Unemployment Rate (%)', data=covid_data)
+plt.title("Covid-19 Impact on Unemployment (2020)")
+plt.xticks(rotation=45)
+plt.show()
+
+plt.figure()
+sns.barplot(
+    x='Estimated Unemployment Rate (%)',
+    y='Region',
+    data=df.sort_values(by='Estimated Unemployment Rate (%)', ascending=False)
+)
+plt.title("Region-wise Unemployment Rate")
+plt.show()
+
+highest_region = df.groupby('Region')['Estimated Unemployment Rate (%)'].mean().idxmax()
+lowest_region = df.groupby('Region')['Estimated Unemployment Rate (%)'].mean().idxmin()
+
+print("\nRegion with highest unemployment:", highest_region)
+print("Region with lowest unemployment:", lowest_region)

@@ -1,0 +1,49 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+
+data = {
+    "Brand_Goodwill": [5, 4, 3, 5, 2, 4, 3, 5, 1, 2],
+    "Horsepower": [120, 150, 110, 180, 90, 160, 130, 200, 85, 100],
+    "Mileage": [18, 15, 20, 12, 25, 14, 17, 10, 28, 22],
+    "Car_Price": [800000, 1000000, 600000, 1500000, 400000,
+                  1100000, 750000, 1800000, 350000, 500000]
+}
+
+df = pd.DataFrame(data)
+
+print("Dataset Preview:")
+print(df.head())
+
+X = df[["Brand_Goodwill", "Horsepower", "Mileage"]]
+y = df["Car_Price"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+print("\nModel Evaluation:")
+print("MAE:", mean_absolute_error(y_test, y_pred))
+print("MSE:", mean_squared_error(y_test, y_pred))
+print("R2 Score:", r2_score(y_test, y_pred))
+
+plt.figure()
+plt.scatter(y_test, y_pred)
+plt.xlabel("Actual Price")
+plt.ylabel("Predicted Price")
+plt.title("Actual vs Predicted Car Prices")
+plt.show()
+
+new_car = [[4, 140, 16]]  
+predicted_price = model.predict(new_car)
+
+print("\nPredicted price for new car:", int(predicted_price[0]))
